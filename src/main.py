@@ -11,7 +11,7 @@ def main():
     print(obj.getNvps(0))
 
 
-    pl = Plane(((0, 0, 0), (1, 1, 1), (2, 2, 2)), (0,0,0))
+    pl = Plane(((0, 0, 0), (1, 0, 0), (0, 0, 1)), (0,0,0))
 
     print(pl.calculate_normal())
 
