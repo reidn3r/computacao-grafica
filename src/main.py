@@ -1,4 +1,4 @@
-from object_parser import ObjectParser
+from object import Object
 import numpy as np
 
 def main():
@@ -6,11 +6,12 @@ def main():
         * Dados do Objeto
         * v: coordenadas dos vertices
     '''
-    parser = ObjectParser()
-    vertex, faces = parser.read_file("../model/cat.obj")
+    obj = Object('./model/cube.obj')
+    vertex, faces = (obj.getVertex(), obj.getFaces())
 
-    nv, ns = len(vertex), len(faces)
-    nvps = [len(x) for x in faces]
+    print(obj.getNs())
+    print(obj.getNv())
+    print(obj.getNvps(0))
 
     p1, p2, p3 = (0, 0, 0), (1, 1, 1), (2, 2, 2)
     r0 = p2
