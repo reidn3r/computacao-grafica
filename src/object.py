@@ -1,5 +1,7 @@
 import numpy as np
 
+DEBUG = True
+
 class Plane:
     def __init__(self, points, r0):
         try:
@@ -80,3 +82,54 @@ class Object:
     
     def getNvps(self, face):
         return self.NVPS[face]
+
+class Projection:
+    def __init__(self, obj: Object, pl: Plane, pov):
+        self.obj = obj
+        self.pl = pl
+        self.pov = np.array(pov)  # Ponto de vista (a, b, c)
+
+    def project(self):
+        # Vetor normal ao plano
+        n = self.pl.normal
+
+        # Cálculo de d0 e d1
+        d0 = self.pov[0]*n[0] + self.pov[1]*n[1] + self.pov[2]*n[2]
+        d1 = self.pl.r0[0]*n[0] + self.pl.r0[1]*n[1] + self.pl.r0[2]*n[2]
+        d = d0 - d1 
+
+        # Construção da matriz de projeção perspectiva
+        a, b, c = self.pov
+        projection_matrix = np.array([
+            [d + a * n[0], a * n[1], a * n[2], -a * d0],
+            [b * n[0], d + b * n[1], b * n[2], -b * d0],
+            [c * n[0], c * n[1], d + c * n[2], -c * d0],
+            [n[0], n[1], n[2], 1]
+        ])
+
+        if DEBUG:
+            print(f'd0: {d0} d1: {d1} d:{d}')
+            print(projection_matrix)
+            print(self.obj.getVertex())
+
+        # Projeção dos vértices do objeto
+        projected_vertices = []
+        for vertex in self.obj.getVertex():
+            # Converter para coordenadas homogêneas
+            vertex_h = np.array([*vertex, 1])  # Adiciona o 1 para homogênea
+            print(vertex_h)
+
+            # Aplicar a matriz de projeção
+            proj_h = np.dot(projection_matrix, vertex_h)
+            print(proj_h)
+
+            # Converter de coordenadas homogêneas para cartesianas
+            if abs(proj_h[3]) > 1e-10:  # Evitar divisão por zero
+                proj_cartesian = proj_h[:3] / proj_h[3]
+            else:
+                proj_cartesian = proj_h[:3]
+
+            projected_vertices.append(proj_cartesian)
+
+        # Retorna os vértices projetados
+        return projected_vertices
