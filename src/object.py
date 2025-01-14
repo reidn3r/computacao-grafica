@@ -1,3 +1,34 @@
+import numpy as np
+
+class Plane:
+    def __init__(self, points, r0):
+        try:
+            self.points = (points[0], points[1], points[2])
+        except Exception:
+            print(f"Informe ao menos 3 pontos, cabaço! {Exception}")
+        
+        self.r0 = r0
+        self.normal = self.calculate_normal()  # Calcula o vetor normal na inicialização
+
+    def calculate_normal(self):
+        # Obtenha os pontos
+        p1, p2, p3 = self.points
+
+        # Vetores diretores do plano
+        v1 = np.array(p2) - np.array(p1)
+        v2 = np.array(p3) - np.array(p1)
+
+        # Produto vetorial para obter o vetor normal
+        normal = np.cross(v1, v2)
+
+        # Normalização do vetor (opcional, depende da aplicação)
+        normal_magnitude = np.linalg.norm(normal)
+        if normal_magnitude != 0:
+            normal = normal / normal_magnitude
+
+        return normal
+
+
 class Object:
 
     def __init__(self, filename: str):
