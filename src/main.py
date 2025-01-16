@@ -2,7 +2,7 @@ from object import Object, Plane, Projection
 import numpy as np
 import cv2
 
-def draw_projection(image, vertices, faces, scale=10, offset=(250, 250)):
+def draw_projection(image, vertices, faces, scale=20, offset=(250, 250)):
     # Verifique se o número de vértices projetados é suficiente
     num_vertices = len(vertices)
     print(num_vertices)
@@ -25,8 +25,8 @@ def draw_projection(image, vertices, faces, scale=10, offset=(250, 250)):
             print(start_vertex, end_vertex)
 
             # Ajuste para a escala e deslocamento da projeção
-            start_point = (int(start_vertex[0] * -scale), int(start_vertex[1] * -scale))
-            end_point = (int(end_vertex[0] * -scale), int(end_vertex[1] * -scale))
+            start_point = (int(start_vertex[0] * scale), int(start_vertex[1] * scale))
+            end_point = (int(end_vertex[0] * scale), int(end_vertex[1] * scale))
 
             # Desenha a linha entre os vértices
             cv2.line(image, start_point, end_point, (255, 255, 255), 1)  # Linha branca
@@ -35,7 +35,7 @@ def draw_projection(image, vertices, faces, scale=10, offset=(250, 250)):
 
 def main():
     # Carregar o cubo
-    obj = Object('./model/cube.obj')
+    obj = Object('./model/Mcube.obj')
     vertex, faces = obj.getVertex(), obj.getFaces()
 
     print("Número de Superfícies:", obj.getNs())

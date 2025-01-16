@@ -94,8 +94,8 @@ class Projection:
         n = self.pl.normal
 
         # Cálculo de d0 e d1
-        d0 = self.pov[0]*n[0] + self.pov[1]*n[1] + self.pov[2]*n[2]
-        d1 = self.pl.r0[0]*n[0] + self.pl.r0[1]*n[1] + self.pl.r0[2]*n[2]
+        d0 = self.pl.r0[0]*n[0] + self.pl.r0[1]*n[1] + self.pl.r0[2]*n[2]
+        d1 = self.pov[0]*n[0] + self.pov[1]*n[1] + self.pov[2]*n[2]
         d = d0 - d1 
 
         # Construção da matriz de projeção perspectiva
@@ -104,8 +104,14 @@ class Projection:
             [d + a * n[0], a * n[1], a * n[2], -a * d0],
             [b * n[0], d + b * n[1], b * n[2], -b * d0],
             [c * n[0], c * n[1], d + c * n[2], -c * d0],
-            [n[0], n[1], n[2], 1]
+            [n[0], n[1], n[2], 1.0]
         ])
+        # projection_matrix = np.array([
+        #     [d1 - a * n[0], -a * n[1], -a * n[2], a * d0],
+        #     [-b * n[0], d1 - b * n[1], -b * n[2], b * d0],
+        #     [-c * n[0], -c * n[1], d1 - c * n[2], c * d0],
+        #     [0,0,0,d1]
+        # ])
 
         if DEBUG:
             print(f'd0: {d0} d1: {d1} d:{d}')
