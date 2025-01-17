@@ -35,7 +35,7 @@ def draw_projection(image, vertices, faces, scale=20, offset=(250, 250)):
 
 def main():
     # Carregar o cubo
-    obj = Object('./model/Mcube.obj')
+    obj = Object('../../model/Vcube.obj')
     vertex, faces = obj.getVertex(), obj.getFaces()
 
     print("Número de Superfícies:", obj.getNs())
