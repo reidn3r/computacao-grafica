@@ -17,8 +17,8 @@ class Plane:
         p1, p2, p3 = self.points
 
         # Vetores diretores do plano
-        v1 = np.array(p2) - np.array(p1)
-        v2 = np.array(p3) - np.array(p1)
+        v1 = np.array(p1) - np.array(p2)
+        v2 = np.array(p3) - np.array(p2)
 
         # Produto vetorial para obter o vetor normal
         normal = np.cross(v1, v2)
@@ -104,38 +104,45 @@ class Projection:
             [d + a * n[0], a * n[1], a * n[2], -a * d0],
             [b * n[0], d + b * n[1], b * n[2], -b * d0],
             [c * n[0], c * n[1], d + c * n[2], -c * d0],
-            [n[0], n[1], n[2], 1.0]
+            [n[0], n[1], n[2], -d1]
         ])
-        # projection_matrix = np.array([
-        #     [d1 - a * n[0], -a * n[1], -a * n[2], a * d0],
-        #     [-b * n[0], d1 - b * n[1], -b * n[2], b * d0],
-        #     [-c * n[0], -c * n[1], d1 - c * n[2], c * d0],
-        #     [0,0,0,d1]
-        # ])
 
         if DEBUG:
             print(f'd0: {d0} d1: {d1} d:{d}')
             print(projection_matrix)
             print(self.obj.getVertex())
 
+        transposed_object = np.array(self.obj.vertex).T # Transpõe matrix dos vértices
+        print(transposed_object)
+
+        projected_vertices = np.dot(projection_matrix, transposed_object)
+
         # Projeção dos vértices do objeto
-        projected_vertices = []
-        for vertex in self.obj.getVertex():
-            # Converter para coordenadas homogêneas
-            vertex_h = np.array([*vertex, 1])  # Adiciona o 1 para homogênea
-            print(vertex_h)
+        # projected_vertices = []
+        # for vertex in self.obj.getVertex():
+        #     # Converter para coordenadas homogêneas
+        #     vertex_h = np.array([*vertex, 1])  # Adiciona o 1 para homogênea
+        #     print(vertex_h)
 
-            # Aplicar a matriz de projeção
-            proj_h = np.dot(projection_matrix, vertex_h)
-            print(proj_h)
+        #     # Aplicar a matriz de projeção
+        #     proj_h = np.dot(projection_matrix, vertex_h)
+        #     print(proj_h)
 
-            # Converter de coordenadas homogêneas para cartesianas
-            if abs(proj_h[3]) > 1e-10:  # Evitar divisão por zero
-                proj_cartesian = proj_h[:3] / proj_h[3]
-            else:
-                proj_cartesian = proj_h[:3]
+        #     # Converter de coordenadas homogêneas para cartesianas
+        #     if abs(proj_h[3]) > 1e-10:  # Evitar divisão por zero
+        #         proj_cartesian = proj_h[:3] / proj_h[3]
+        #     else:
+        #         proj_cartesian = proj_h[:3]
 
-            projected_vertices.append(proj_cartesian)
+        #     projected_vertices.append(proj_cartesian)
+
+        m = projected_vertices.shape[0]
+        n = projected_vertices.shape[1]
+        for line in range(m):
+            for collum in range(n):
+                projected_vertices[line][collum] /= projected_vertices[m-1][collum]
+
+        print(projected_vertices)
 
         # Retorna os vértices projetados
         return projected_vertices
