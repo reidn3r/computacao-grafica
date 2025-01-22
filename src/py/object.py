@@ -88,6 +88,7 @@ class Projection:
         self.obj = obj
         self.pl = pl
         self.pov = np.array(pov)  # Ponto de vista (a, b, c)
+        self.projected_vertices = []
 
     def project(self):
         # Vetor normal ao plano
@@ -107,42 +108,53 @@ class Projection:
             [n[0], n[1], n[2], -d1]
         ])
 
-        if DEBUG:
-            print(f'd0: {d0} d1: {d1} d:{d}')
-            print(projection_matrix)
-            print(self.obj.getVertex())
+        print(f'd0: {d0} d1: {d1} d:{d}')
+        print('\nMatriz de projeção:')
+        print(projection_matrix)
+        print('\nVértices:')
+        print(self.obj.getVertex())
 
-        transposed_object = np.array(self.obj.vertex).T # Transpõe matrix dos vértices
-        print(transposed_object)
-
+        transposed_object = np.array(self.obj.vertex).T # Transpõe matrix dos vérticess
         projected_vertices = np.dot(projection_matrix, transposed_object)
-
-        # Projeção dos vértices do objeto
-        # projected_vertices = []
-        # for vertex in self.obj.getVertex():
-        #     # Converter para coordenadas homogêneas
-        #     vertex_h = np.array([*vertex, 1])  # Adiciona o 1 para homogênea
-        #     print(vertex_h)
-
-        #     # Aplicar a matriz de projeção
-        #     proj_h = np.dot(projection_matrix, vertex_h)
-        #     print(proj_h)
-
-        #     # Converter de coordenadas homogêneas para cartesianas
-        #     if abs(proj_h[3]) > 1e-10:  # Evitar divisão por zero
-        #         proj_cartesian = proj_h[:3] / proj_h[3]
-        #     else:
-        #         proj_cartesian = proj_h[:3]
-
-        #     projected_vertices.append(proj_cartesian)
 
         m = projected_vertices.shape[0]
         n = projected_vertices.shape[1]
         for line in range(m):
             for collum in range(n):
                 projected_vertices[line][collum] /= projected_vertices[m-1][collum]
-
+        print('\nCoordenadas homgêneas:')
         print(projected_vertices)
+
+        projected_vertices = projected_vertices[:2] # Remove as coordenadas que z e w
+        print('\nRemove Z e W:')
+        print(projected_vertices)
+
+        # Multiplicando apenas as coordenadas y por -1
+        projected_vertices[1] *= -1
+        print('\nCoordenadas refletidas:')
+        print(projected_vertices)
+
+        self.projected_vertices = projected_vertices
 
         # Retorna os vértices projetados
         return projected_vertices
+
+    def toViewport(self, X, Y, U, V, S):
+        Xmax, Xmin = X[0], X[1]
+        Ymax, Ymin = Y[0], Y[1]
+        Umax, Umin = U[0], U[1]
+        Vmax, Vmin = V[0], V[1]
+        Sx, Sy = S[0], S[1]
+
+        # Lista para armazenar as coordenadas de dispositivo
+        deviceCoordinates = self.projected_vertices.copy()
+
+        # O PROBLEMA TA AQUIIIIIIIIIIIIIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!!!
+        m = deviceCoordinates.shape[0]
+        for i in range(m):
+            deviceCoordinates[0][i] = (Sx * self.projected_vertices[0][i]) - (Sx * Xmin)
+        
+        for i in range(m):
+            deviceCoordinates[1][i] = -(Sy * self.projected_vertices[1][i]) - (Sy * Ymin)
+
+        return np.array(deviceCoordinates)
