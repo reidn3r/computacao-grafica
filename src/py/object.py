@@ -149,7 +149,6 @@ class Projection:
         # Lista para armazenar as coordenadas de dispositivo
         deviceCoordinates = self.projected_vertices.copy()
 
-        # O PROBLEMA TA AQUIIIIIIIIIIIIIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!!!
         n = deviceCoordinates.shape[1]
         for i in range(n):
             deviceCoordinates[0][i] = (Sx * self.projected_vertices[0][i]) - (Sx * Xmin)
