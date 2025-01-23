@@ -140,21 +140,21 @@ class Projection:
         return projected_vertices
 
     def toViewport(self, X, Y, U, V, S):
-        Xmax, Xmin = X[0], X[1]
-        Ymax, Ymin = Y[0], Y[1]
-        Umax, Umin = U[0], U[1]
-        Vmax, Vmin = V[0], V[1]
+        Xmin, Xmax = X[0], X[1]
+        Ymin, Ymax = Y[0], Y[1]
+        Umin, Umax = U[0], U[1]
+        Vmin, Vmax = V[0], V[1]
         Sx, Sy = S[0], S[1]
 
         # Lista para armazenar as coordenadas de dispositivo
         deviceCoordinates = self.projected_vertices.copy()
 
         # O PROBLEMA TA AQUIIIIIIIIIIIIIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!!!
-        m = deviceCoordinates.shape[0]
-        for i in range(m):
+        n = deviceCoordinates.shape[1]
+        for i in range(n):
             deviceCoordinates[0][i] = (Sx * self.projected_vertices[0][i]) - (Sx * Xmin)
         
-        for i in range(m):
+        for i in range(n):
             deviceCoordinates[1][i] = -(Sy * self.projected_vertices[1][i]) - (Sy * Ymin)
 
         return np.array(deviceCoordinates)
