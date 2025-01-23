@@ -1,4 +1,4 @@
-from object import Object, Plane, Projection
+from object import Object, Plane, Projection, flip
 import numpy as np
 import cv2
 
@@ -46,10 +46,8 @@ print(projected_viewport)
 # Criar uma imagem para visualizar a projeção
 image = np.zeros((320, 320), dtype=np.uint8)
 
-print(faces)
-
 # Desenhar a projeção na imagem
-draw_projection(image, projected_viewport, faces)
+draw_projection(image, flip(projected_viewport), faces)
 
 # Mostrar a imagem
 cv2.imshow("Viewport", image)

@@ -158,3 +158,27 @@ class Projection:
             deviceCoordinates[1][i] = -(Sy * self.projected_vertices[1][i]) - (Sy * Ymin)
 
         return np.array(deviceCoordinates)
+
+def flip(projected_viewport):
+    YupperLimit, YdownLimt, Ymid = projected_viewport[1][0], projected_viewport[1][0], 0
+    XupperLimit, XdownLimt, Xmid = projected_viewport[0][0], projected_viewport[0][0], 0
+    n = projected_viewport.shape[1]
+    
+    for i in range(n):
+        if projected_viewport[1][i] < YdownLimt:
+            YdownLimt = projected_viewport[1][i]
+        if projected_viewport[1][i] > YupperLimit:
+            YupperLimit = projected_viewport[1][i]
+        if projected_viewport[0][i] < XdownLimt:
+            XdownLimt = projected_viewport[0][i]
+        if projected_viewport[0][i] > XupperLimit:
+            XupperLimit = projected_viewport[0][i]
+    
+    Ymid = (YupperLimit + YdownLimt) / 2
+    Xmid = (XupperLimit + XdownLimt) / 2
+
+    for i in range(n):
+        projected_viewport[1][i] = 2 * Ymid - projected_viewport[1][i]
+        projected_viewport[0][i] = 2 * Xmid - projected_viewport[0][i]
+
+    return projected_viewport
